@@ -1,0 +1,42 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id                    Int            @id @default(autoincrement())
+  email                 String         @unique
+  password              String
+  name                  String
+  phone                 String
+  notificationFrequency String         @default("passive")
+  createdAt             DateTime       @default(now())
+  goals                 Goal[]
+}
+
+model Goal {
+  id            Int            @id @default(autoincrement())
+  title         String
+  description   String?
+  goalType      String         // "one-time" or "recurring"
+  frequency     String?        // "daily", "weekly", "monthly" (only for recurring)
+  dueDate       DateTime?      // only for one-time goals
+  isCompleted   Boolean        @default(false)
+  lastCompleted DateTime?      // track when it was last completed (for recurring)
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  userId        Int
+  user          User           @relation(fields: [userId], references: [id])
+  notifications Notification[]
+}
+
+model Notification {
+  id      Int      @id @default(autoincrement())
+  goalId  Int
+  goal    Goal     @relation(fields: [goalId], references: [id])
+  sentAt  DateTime @default(now())
+  message String
+}

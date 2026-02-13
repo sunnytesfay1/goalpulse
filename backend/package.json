@@ -1,0 +1,33 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "GoalPulse API",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "nodemon src/index.js",
+    "prisma:push": "node --env-file=.env ./node_modules/.bin/prisma db push",
+    "prisma:studio": "node --env-file=.env ./node_modules/.bin/prisma studio",
+    "prisma:generate": "node --env-file=.env ./node_modules/.bin/prisma generate"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "bcryptjs": "^2.4.3",
+    "jsonwebtoken": "^9.0.2",
+    "prisma": "^7.4.0",
+    "@prisma/client": "^7.4.0",
+    "@prisma/adapter-pg": "^7.4.0",
+    "pg": "^8.11.3",
+    "nodemailer": "^6.9.7",
+    "node-cron": "^3.0.3",
+    "twilio": "^5.0.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  }
+}
