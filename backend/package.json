@@ -4,6 +4,7 @@
   "description": "GoalPulse API",
   "main": "src/index.js",
   "scripts": {
+    "build": "prisma generate",
     "start": "node src/index.js",
     "dev": "nodemon src/index.js",
     "prisma:push": "node --env-file=.env ./node_modules/.bin/prisma db push",
