@@ -1,5 +1,6 @@
 "use client";
 
+import { API_URL } from "@/config/api";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
@@ -36,7 +37,7 @@ export default function Dashboard() {
 
   const fetchGoals = async () => {
     try {
-      const res = await fetch("http://localhost:8080/api/goals", {
+      const res = await fetch(`${API_URL}/api/goals`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

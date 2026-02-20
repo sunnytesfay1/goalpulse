@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
+import { API_URL } from "@/config/api";
 
 export default function Settings() {
   const { user, token, logout, updateUser, loading: authLoading } = useAuth();
@@ -12,12 +13,48 @@ export default function Settings() {
   const [loading, setLoading] = useState(false);
   const [testLoading, setTestLoading] = useState(false);
 
+  useEffect(() => {
+    if (!authLoading && !user) {
+      router.push("/login");
+    } else if (user) {
+      setNotificationFrequency(user.notificationFrequency || "passive");
+    }
+  }, [user, authLoading, router]);
+
+  const handleSave = async () => {
+    setLoading(true);
+    setMessage("");
+
+    try {
+      const res = await fetch(`${API_URL}/api/auth/notification-preference`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ notificationFrequency }),
+      });
+
+      if (res.ok) {
+        updateUser({ notificationFrequency });
+        setMessage("Settings saved successfully!");
+        setTimeout(() => setMessage(""), 3000);
+      } else {
+        setMessage("Failed to save settings");
+      }
+    } catch (error) {
+      setMessage("Error saving settings");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleTestSMS = async () => {
     setTestLoading(true);
     setMessage("");
 
     try {
-      const res = await fetch("http://localhost:8080/api/auth/test-sms", {
+      const res = await fetch(`${API_URL}/api/auth/test-sms`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -35,45 +72,6 @@ export default function Settings() {
       setMessage("Error sending test SMS");
     } finally {
       setTestLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    if (!authLoading && !user) {
-      router.push("/login");
-    } else if (user) {
-      setNotificationFrequency(user.notificationFrequency || "passive");
-    }
-  }, [user, authLoading, router]);
-
-  const handleSave = async () => {
-    setLoading(true);
-    setMessage("");
-
-    try {
-      const res = await fetch(
-        "http://localhost:8080/api/auth/notification-preference",
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({ notificationFrequency }),
-        },
-      );
-
-      if (res.ok) {
-        updateUser({ notificationFrequency });
-        setMessage("Settings saved successfully!");
-        setTimeout(() => setMessage(""), 3000);
-      } else {
-        setMessage("Failed to save settings");
-      }
-    } catch (error) {
-      setMessage("Error saving settings");
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -219,6 +217,7 @@ export default function Settings() {
           >
             {loading ? "Saving..." : "Save Changes"}
           </button>
+
           <button
             onClick={handleTestSMS}
             className="btn-secondary"
